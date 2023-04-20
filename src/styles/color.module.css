@@ -1,0 +1,20 @@
+:global(:root) {
+    --primary-white: #ffffff;
+    --primary-black: #0E0E0E;
+    --primary-border: #F4F4F4;
+    --primary-icon: #E6E6E6;
+    --nav-color: #FCFCFC;
+    --nav-text: #828282;
+    --input-color: #F9F9F9;
+    --input-border: #606060;
+    --btn-color: #E5E5E5;
+    --btn-text-color: #4A4A4A;
+    --avatar-color: #A7958B;
+    --avatar-color-2: #BFAD76;
+    --avatar-color-3: #E7D3A7;
+    --avatar-color-4: #F0B694;
+    --avatar-color-5: #C2C2BB;
+    --line-color: #F0F0F0;
+    --done-color: #80CC88;
+    --link-border: #8E8E8E;
+}

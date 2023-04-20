@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import './color.module.css';
+
+:global(:root){
+    --mobile-edge-width: 3%;
+    --mobile-edge-height: 10%;
+    --desktop-edge-width: 5%;
+    --dsektop-edge-height: 5%;
+}
+
+:global(body){
+    font-family: 'Outfit', sans-serif;
+    font-size: 15px;
+    color: var(--primary-text);
+}
+
+:global(h1) {
+    font-size: 40px;
+}
+
+:global(h2) {
+    font-size: 18px;
+}
+
+:global(h3) {
+    font-size: 15px;
+}
+
+:global(h4) {
+    font-size: 10px;
+}
+
+@media screen and (min-width: 768px) {
+    :global(h1) {
+        font-size: 45px;
+    }
+    
+    :global(h2) {
+        font-size: 20px;
+    }
+    
+    :global(h3) {
+        font-size: 18px;
+    }
+    
+    :global(h4) {
+        font-size: 15px;
+    }
+}

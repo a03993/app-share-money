@@ -1,0 +1,26 @@
+footer {
+    position: absolute;
+    bottom:0;
+    width:100%;
+    background-color: var(--primary-border);
+    padding: 2rem var(--mobile-edge-width);
+    text-align: center;
+}
+
+.content {
+    margin: 0.5rem 0;
+}
+
+.link {
+    background: var(--input-color);
+    border: 1px solid var(--link-border);
+    border-radius: 18px;
+    max-width: 500px;
+    margin: auto;
+}
+
+.link h3 {
+    margin: 0.5rem;
+    text-decoration-line: underline;
+    color: var(--link-border)
+}

@@ -1,13 +1,93 @@
 import React, { useState } from 'react';
+import uuid from 'react-uuid';
 import Home from './Home'
 import PaymentList from './PaymentList'
 import Result from './Result'
 
 function Main( {currentPage, setCurrentPage} ) {
 
-
-    const [paymentData, setPaymentData] = useState([]);
-    const [totalPrice, setTotalPrice] = useState(0)
+    // 設定 paymentData 原本就存有一比資料 (目前是假資料)
+    const [paymentData, setPaymentData] = useState([
+        {
+            id: uuid,
+            name: "tina",
+            color: "#BFAD76",
+            payment: [
+                {
+                    price: 750,
+                    item: 'MRT',
+                    id: uuid
+                },
+                {
+                    price: 120,
+                    item: 'bus',
+                    id: uuid
+                },
+                {
+                    price: 130,
+                    item: 'taxi',
+                    id: uuid
+                }
+            ]
+        },
+        {
+            id: uuid,
+            name: "barney",
+            color: "#E7D3A7",
+            payment: [
+                {
+                    price: 210,
+                    item: 'breakfast',
+                    id: uuid
+                },
+                {
+                    price: 220,
+                    item: 'lunch',
+                    id: uuid
+                },
+                {
+                    price: 230,
+                    item: 'dinner',
+                    id: uuid
+                }
+            ]
+        },
+        {
+            id: uuid,
+            name: "luffy",
+            color: "#C2C2BB",
+            payment: [
+                {
+                    price: 310,
+                    item: 'coffee',
+                    id: uuid
+                },
+                {
+                    price: 320,
+                    item: 'dessert',
+                    id: uuid
+                }
+            ]
+        },
+        {
+            id: uuid,
+            name: "miumiu",
+            color: "#F0B694",
+            payment: [
+                {
+                    price: 450,
+                    item: 'candy',
+                    id: uuid
+                },
+                {
+                    price: 500,
+                    item: 'bag',
+                    id: uuid
+                }
+            ]
+        }
+    ]);
+    const [totalPrice, setTotalPrice] = useState(3240)
 
     // local Storage -> 不需再重新登入
     localStorage.setItem('paymentData' ,JSON.stringify(paymentData));

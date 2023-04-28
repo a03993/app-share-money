@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { paymentDataTest, paymentResultDataTest, totalPriceTest, paymentAverageTest } from '../data'
 import { numberWithCommas } from '../function'
 
 import Style from "./Result.module.css"
@@ -10,25 +9,32 @@ function Result({ paymentData, totalPrice }) {
     const creditor = []
     const debtor = []
 
-    // 從 paymentData(Test) render 使用者的 avatar 
-    const ShowPersonAvatar = paymentDataTest.map (person => 
+    const paymentResultDataTest = paymentData.map((person) => {
+        const sum = person.payment.map((payment)=> payment.price).reduce((total, price) => {
+          return total + price;
+        }, 0);
+        return { name: person.name, color: person.color, payment: sum };
+      });
+
+    const paymentAverage = Math.round(totalPrice/paymentResultDataTest.length)
+
+    // 從 paymentData render 使用者的 avatar 
+    const ShowPersonAvatar = paymentData.map (person => 
     <li key={person.payment.id} style={{background: person.color}}>{person.name[0]}</li>)
 
     function Classification() {
         for(let i = 0; i < paymentResultDataTest.length; i++){
-            if(paymentAverageTest - paymentResultDataTest[i].payment < 0){
-                // console.log(paymentResultDataTest[i].name + '不用付錢，需要拿回$' + Math.abs(paymentAverageTest - paymentResultDataTest[i].payment))
+            if(paymentAverage - paymentResultDataTest[i].payment < 0){
                 creditor.push({
                     name: paymentResultDataTest[i].name,
                     color: paymentResultDataTest[i].color,
-                    bePayed: Math.round(Math.abs(paymentAverageTest - paymentResultDataTest[i].payment))
+                    bePayed: Math.round(Math.abs(paymentAverage - paymentResultDataTest[i].payment))
                 })
             } else {
-                // console.log(paymentResultDataTest[i].name + '需要付出$' + Math.abs(paymentAverageTest - paymentResultDataTest[i].payment))
                 debtor.push({
                     name: paymentResultDataTest[i].name,
                     color: paymentResultDataTest[i].color,
-                    pay: Math.round(Math.abs(paymentAverageTest - paymentResultDataTest[i].payment))
+                    pay: Math.round(Math.abs(paymentAverage - paymentResultDataTest[i].payment))
                 })
             }
         }
@@ -128,18 +134,18 @@ function Result({ paymentData, totalPrice }) {
             <div className={Style.average__container}>
                 <div className={Style.average__wrapper}>
                     <div className={Style.average}>
-                        <h1>${numberWithCommas(paymentAverageTest)}</h1>
+                        <h1>${numberWithCommas(paymentAverage)}</h1>
                         <h3>/人</h3>
                     </div>
                 </div>
                 <div className={Style.total__list__container}>
                     <div className={Style.total__wrapper}>
                         <div className={Style.total}>
-                            <h3>{paymentDataTest.length}</h3>
+                            <h3>{paymentData.length}</h3>
                             <h4>人</h4>
                         </div>
                         <div className={Style.total__spending}>
-                            <h3>${numberWithCommas(totalPriceTest)}</h3>
+                            <h3>${numberWithCommas(totalPrice)}</h3>
                         </div>       
                     </div>
                     <div className={Style.avatar__list__wrapper}>

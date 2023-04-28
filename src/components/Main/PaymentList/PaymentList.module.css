@@ -212,7 +212,7 @@ label input {
 
 @media screen and (min-width:768px) { 
     .container {
-        width: 80%;
+        width: 90%;
         margin: 3rem auto;
     }
     
@@ -239,7 +239,7 @@ label input {
     }
 
     .spending__amount {
-        margin-left: 5rem;
+        margin-left: 2rem;
     }
 
     .payment__item{

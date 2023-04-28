@@ -86,17 +86,3 @@ export const paymentDataTest = [
             ]
         }
 ]
-
-// 彙整 paymentData(Test) 資料成 paymentResultData(Test)
-export const paymentResultDataTest = paymentDataTest.map((person) => {
-    const sum = person.payment.map((payment)=> payment.price).reduce((total, price) => {
-      return total + price;
-    }, 0);
-    return { name: person.name, color: person.color, payment: sum };
-  });
-
-// 從 paymentResultData(Test) 陣列中取出每個人花的錢加總 = 總花費
-export const totalPriceTest = paymentResultDataTest.map(person => person.payment).reduce((a, b)=>a+b)
-
- // 平均一人的花費
- export const paymentAverageTest = Math.round(totalPriceTest/paymentResultDataTest.length)

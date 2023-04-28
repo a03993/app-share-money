@@ -77,7 +77,7 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
                     <p className={Style.personal__avatar} style={{background: person.color}}>
                        {person.name[0]}
                     </p>
-                    </div>
+                </div>
                 <div className={Style.payment__list}>
                     <ul>
                         {person.payment.map((payment, index) =>(
@@ -184,38 +184,38 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
             </div>
             <Footer />
                         
-         <Modal show={show} onHide={handleClose} animation={false}>
-            <div>
-                <Modal.Header closeButton></Modal.Header>
-                <div className={Style.modal__wrapper}>
-                    <div>
-                        <div className={Style.edit__avatar__icon}><EditIcon /></div>
-                        <div className={Style.avatar} style={{background:showModal.color}}>{showModal.name[0]}</div> 
-                    </div>
-                    <h2>{showModal.name}</h2>
-                    <Modal.Body>
-                        <div className={Style.modal__body}>
-                            <div className={Style.edit__column}>
-                                <h3>Item</h3>
-                                <input type="text" onChange={onEditItemChange} placeholder={itemPlaceholder} />
-                            </div>
-                            <div className={Style.edit__column}>
-                                <h3>Price</h3>
-                                <input type="number" onChange={onEditPriceChange} placeholder={pricePlaceholder} />
-                            </div>
+            <Modal show={show} onHide={handleClose} animation={false}>
+                <div>
+                    <Modal.Header closeButton></Modal.Header>
+                    <div className={Style.modal__wrapper}>
+                        <div>
+                            <div className={Style.edit__avatar__icon}><EditIcon /></div>
+                            <div className={Style.avatar} style={{background:showModal.color}}>{showModal.name[0]}</div> 
                         </div>
-                    </Modal.Body>
-                    <div className={Style.modal__footer}>
-                        <Button className={Style.save__btn} onClick={saveEditedPayment} variant="light" size="sm">
-                            Save
-                        </Button>
-                        <Button className={Style.delete__btn} onClick={paymentRemove} variant="dark" size="sm">
-                            Delete
-                        </Button>
+                        <h2>{showModal.name}</h2>
+                        <Modal.Body>
+                            <div className={Style.modal__body}>
+                                <div className={Style.edit__column}>
+                                    <h3>Item</h3>
+                                    <input type="text" onChange={onEditItemChange} placeholder={itemPlaceholder} />
+                                </div>
+                                <div className={Style.edit__column}>
+                                    <h3>Price</h3>
+                                    <input type="number" onChange={onEditPriceChange} placeholder={pricePlaceholder} />
+                                </div>
+                            </div>
+                        </Modal.Body>
+                        <div className={Style.modal__footer}>
+                            <Button className={Style.save__btn} onClick={saveEditedPayment} variant="light" size="sm">
+                                Save
+                            </Button>
+                            <Button className={Style.delete__btn} onClick={paymentRemove} variant="dark" size="sm">
+                                Delete
+                            </Button>
+                        </div>
                     </div>
-                 </div>
-            </div>
-        </Modal>
+                </div>
+            </Modal>
     </div>
     )
 }

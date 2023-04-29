@@ -1,14 +1,14 @@
 footer {
-    position: absolute;
-    bottom:0;
-    width:100%;
+    position: fixed;  /* 讓元素的位置是固定的，不會隨著頁面滾動而改變位置*/
+    bottom: 0;
+    width: 100%;
+    height: 6rem; /* 根據您的需求設定高度 */
     background-color: var(--primary-border);
-    padding: 2rem var(--mobile-edge-width);
     text-align: center;
 }
 
 .content {
-    margin: 0.5rem 0;
+    margin: 0.8rem 0;
 }
 
 .link {

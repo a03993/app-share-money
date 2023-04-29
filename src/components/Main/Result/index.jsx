@@ -51,7 +51,7 @@ function Result({ paymentData, totalPrice }) {
             })
             for(let j = 0; j < creditor.length; j++){
                 if (debtor[i].pay - creditor[j].bePayed > 0){
-                    console.log(debtor[i].name + ' need to pay ' + creditor[j].name + creditor[j].bePayed + '元')
+                    // console.log(debtor[i].name + ' need to pay ' + creditor[j].name + creditor[j].bePayed + '元')
                     paymentResult[i].payment.push({
                         creditor: creditor[j].name,
                         color: creditor[j].color,
@@ -59,9 +59,9 @@ function Result({ paymentData, totalPrice }) {
                     })
                     debtor[i].pay = debtor[i].pay - creditor[j].bePayed
                     creditor[j].bePayed = 0
-                    console.log(debtor[i].name + ' 還要繼續還下一個人錢')    
+                    // console.log(debtor[i].name + ' 還要繼續還下一個人錢')    
                 } else if (debtor[i].pay - creditor[j].bePayed === 0){
-                    console.log(debtor[i].name + ' need to pay ' + creditor[j].name + creditor[j].bePayed + '元')
+                    // console.log(debtor[i].name + ' need to pay ' + creditor[j].name + creditor[j].bePayed + '元')
                     paymentResult[i].payment.push({
                         creditor: creditor[j].name,
                         color: creditor[j].color,
@@ -69,10 +69,10 @@ function Result({ paymentData, totalPrice }) {
                     })
                     debtor[i].pay = 0
                     creditor[j].bePayed = 0
-                    console.log(debtor[i].name + '不用再還錢')
+                    // console.log(debtor[i].name + '不用再還錢')
                     break
                 } else if (debtor[i].pay - creditor[j].bePayed < 0){
-                    console.log(debtor[i].name + ' need to pay ' + creditor[j].name + debtor[i].pay + '元')
+                    // console.log(debtor[i].name + ' need to pay ' + creditor[j].name + debtor[i].pay + '元')
                     paymentResult[i].payment.push({
                         creditor: creditor[j].name,
                         color: creditor[j].color,
@@ -80,8 +80,8 @@ function Result({ paymentData, totalPrice }) {
                     })
                     creditor[j].bePayed = creditor[j].bePayed - debtor[i].pay
                     debtor[i].pay = 0
-                    console.log(creditor[j].name + '還需得到' + creditor[j].bePayed)
-                    console.log(debtor[i].name + '不用再還錢')
+                    // console.log(creditor[j].name + '還需得到' + creditor[j].bePayed)
+                    // console.log(debtor[i].name + '不用再還錢')
                     break
                 }
             }
@@ -89,8 +89,8 @@ function Result({ paymentData, totalPrice }) {
     }
 
     toPay()
-    console.log('paymentResult: ',paymentResult)
 
+    // 渲染 Payment
     const Payment = paymentResult.map(person =>(
         <>
             <div className={Style.payment__wrapper}>
@@ -99,9 +99,9 @@ function Result({ paymentData, totalPrice }) {
                         <div className={Style.avatar} style={{background: person.color}}>{person.debtor[0]}</div>
                     </div>
                     <div className={Style.payment__content}>
-                        <ul >
+                        <ul>
                             {person.payment.map(payment =>(
-                                <li className={Style.payment}>
+                                <li className={Style.payment} style={!payment.debt ? {display:'none'} : {dispaly:'block'}}>
                                     <div className={Style.pay}>
                                         <div>pay</div>
                                         <div className={Style.pay__arrow}></div>
@@ -121,12 +121,6 @@ function Result({ paymentData, totalPrice }) {
             <div className={Style.line}></div>
         </>
     ))
-
-    // checkbox
-    // const handleChange = (event) => {
-    //     setChecked(event.target.checked);
-    //     event.stopPropagation();
-    // };
 
     return(
         <div className={Style.container}>
@@ -169,8 +163,8 @@ function Result({ paymentData, totalPrice }) {
                 <div className={Style.done__payment__list__wrapper}>
                     <h2>Done Payment</h2>
                     <div className={Style.line}></div>
-                        
-                    </div>     
+
+                </div>     
             </div>
         </div>
     )

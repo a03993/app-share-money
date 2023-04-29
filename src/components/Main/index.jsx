@@ -6,90 +6,91 @@ import Result from './Result'
 
 function Main( {currentPage, setCurrentPage} ) {
 
-    // 設定 paymentData 原本就存有一比資料 (目前是假資料)
+    // Array:paymentData (這邊先設定原本就存有一筆資料，目前是假資料)
     const [paymentData, setPaymentData] = useState([
         {
-            id: uuid,
+            id: uuid(),
             name: "tina",
             color: "#BFAD76",
             payment: [
                 {
                     price: 750,
                     item: 'MRT',
-                    id: uuid
+                    id: uuid()
                 },
                 {
                     price: 120,
                     item: 'bus',
-                    id: uuid
+                    id: uuid()
                 },
                 {
                     price: 130,
                     item: 'taxi',
-                    id: uuid
+                    id: uuid()
                 }
             ]
         },
         {
-            id: uuid,
+            id: uuid(),
             name: "barney",
             color: "#E7D3A7",
             payment: [
                 {
                     price: 210,
                     item: 'breakfast',
-                    id: uuid
+                    id: uuid()
                 },
                 {
                     price: 220,
                     item: 'lunch',
-                    id: uuid
+                    id: uuid()
                 },
                 {
                     price: 230,
                     item: 'dinner',
-                    id: uuid
+                    id: uuid()
                 }
             ]
         },
         {
-            id: uuid,
+            id: uuid(),
             name: "luffy",
             color: "#C2C2BB",
             payment: [
                 {
                     price: 310,
                     item: 'coffee',
-                    id: uuid
+                    id: uuid()
                 },
                 {
                     price: 320,
                     item: 'dessert',
-                    id: uuid
+                    id: uuid()
                 }
             ]
         },
         {
-            id: uuid,
+            id: uuid(),
             name: "miumiu",
             color: "#F0B694",
             payment: [
                 {
                     price: 450,
                     item: 'candy',
-                    id: uuid
+                    id: uuid()
                 },
                 {
                     price: 500,
                     item: 'bag',
-                    id: uuid
+                    id: uuid()
                 }
             ]
         }
     ]);
+    // 數字：totalPrice （這邊先設定如同 paymentData 依樣的假資料：總金額 $3,240)
     const [totalPrice, setTotalPrice] = useState(3240)
 
-    // local Storage -> 不需再重新登入
+    // local Storage -> 登入過後就不會再跳 popup 要求登入
     localStorage.setItem('paymentData' ,JSON.stringify(paymentData));
 
     // 取出 local storage 的值

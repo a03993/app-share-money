@@ -212,7 +212,6 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
                 </div>
             </Modal>
     </div>
-    )
-}
+    )}
 
 export default PaymentList

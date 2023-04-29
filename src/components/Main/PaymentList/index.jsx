@@ -12,65 +12,56 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
 
     const handleClose = () => setShow(false);
     const [show, setShow] = useState(false);
-    const [showModal, setShowModal] = useState({  
-            id: uuid(),
-            name: '',
-            color: '',
-            payment: [
-                {
-                    price: 0,
-                    item: '',
-                    id: uuid()
-                }
-            ]
-    })
-    const [index, setIndex]= useState(0)
-    const [formData, setFormData] = useState({});
-    const [item, setItem] = useState('')
-    const [price, setPrice] = useState('')
-    const [itemPlaceholder, setItemPlaceholder] = useState('')
-    const [pricePlaceholder, setPricePlaceholder] = useState(0)
+    const [showModal, setShowModal] = useState({})
+    const [inputValues, setInputValues] = useState({
+        item: '',
+        price: '',
+    });
+    const [inputEditValues, setInputEditValues] = useState({
+        editItem: '',
+        editPrice: '',
+    });
+    const [personIndex, setPersonIndex] = useState(0)
+    const [paymentIndex, setPaymentIndex] = useState(0)
 
-    // input value 監聽表單元素的值變化
-    function onItemChange(event){
-        setItem(event.target.value);
-        const name = event.target.name;
-        const value = event.target.value;
-        setFormData({ ...formData, [name]: value });
+
+    // 創建後在 paymentData 內的 index
+    const thisIndex = paymentData.length - 1
+
+    // input value 監聽表單元素（item/price）的值變化
+    const handleInputChange = (event) => {
+        const { name, value } = event.target;
+        setInputValues({ ...inputValues, [name]: value });
     }
 
-    function onPriceChange(event){
-        setPrice(event.target.value);
-        const name = event.target.name;
-        const value = parseInt(event.target.value);
-        setFormData({ ...formData, [name]: value });
-    }
-
-    // 將使用者輸入 input 的值傳遞至物件陣列 paymentData 儲存
+    // 按下 + 按鈕後，將 input 的值傳遞至物件陣列 paymentData 內儲存
     const handleSubmit = (event) => {
         event.preventDefault();
-        if(item.trim() === '') {
+        console.log('inputValues: ',inputValues)
+        if(inputValues.item.toString().trim() === '') {
             alert('Please enter the item!')
             return
-        } else if (price.trim() === '') {
+        } else if (inputValues.price.toString().trim() === '') {
             alert('Please enter the price!')
             return
         } else {
-            paymentData[0].payment.push(
+            paymentData[thisIndex].payment.push(
                 {
-                    price: formData.price,
-                    item: formData.item,
+                    price: Number(inputValues.price),
+                    item: inputValues.item,
                     id: uuid(),  
                 }
             )
-            setTotalPrice(totalPrice+formData.price)
-            setItem('');
-            setPrice('');
+            setTotalPrice(totalPrice + Number(inputValues.price))
+            setInputValues({
+                item: '',
+                price: '',
+              })
         }  
       };
 
     // show detail
-    const detail = paymentData.map(person =>(
+    const detail = paymentData.map((person, personIndex) =>(
         <>
             <div className={Style.payment}>
                 <div style={person.payment.length<=0 ? {display:'none'} : {display:'block'}}>
@@ -80,77 +71,81 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
                 </div>
                 <div className={Style.payment__list}>
                     <ul>
-                        {person.payment.map((payment, index) =>(
+                        {person.payment.map((payment, paymentIndex) =>(
                         <li key={payment.id} className={Style.personal__payment}>
                             <h3 className={Style.payment__item}>{payment.item}</h3>
                             <h3 className={Style.payment__price}>${numberWithCommas(payment.price)}</h3>
-                            <button className={Style.payment__btn} variant="primary" onClick={()=>handleShow(person, index)} />
+                            <button className={Style.payment__btn} variant="primary" onClick={()=>handleShow(person, personIndex, paymentIndex)} />
                         </li>
                         ))}
                     </ul>
                 </div>
             </div>
-            <div className={Style.line} style={person.payment.length<=0 ? {display:'none'} : {display:'block'}}></div>
+            <div className={Style.line} style={person.payment.length <= 0 ? {display:'none'} : {display:'block'}}></div>
         </>
     ))
 
-    // show modal
-    function handleShow(person, paymentIndex) {
+    // 點擊 > 按鈕 show modal
+    function handleShow(person, personIndex, paymentIndex) {
         setShow(true)
-        setShowModal(person)
-        setItemPlaceholder(person.payment[paymentIndex].item)
-        setPricePlaceholder(person.payment[paymentIndex].price)
-        setIndex(paymentIndex)
+        setShowModal({
+            id: person.payment[paymentIndex].id,
+            avatar: person.name[0],
+            color: person.color,
+            name: person.name,
+            item: person.payment[paymentIndex].item,
+            price: person.payment[paymentIndex].price,
+        })
+        setPersonIndex(personIndex)
+        setPaymentIndex(paymentIndex)
     }
 
-    console.log('itemPlaceholder', itemPlaceholder)
-    console.log('pricePlaceholder', pricePlaceholder)
-
-    // modal remove(payment)
+    // modal 中點擊 delete 刪除 paymentData 資料
     function paymentRemove(){
-        setTotalPrice(totalPrice-paymentData[0].payment[index].price)
-        paymentData[0].payment.splice(index, 1)
-        setItemPlaceholder('')
-        setPricePlaceholder(0)
+        const priceRemove = paymentData[personIndex].payment[paymentIndex].price
+        setTotalPrice(totalPrice - priceRemove)
+        paymentData[personIndex].payment.splice(paymentIndex, 1)
         setShow(false)
     }
 
-    // modal update(payment)
-    function saveEditedPayment(){
+    // modal 中點擊 save 更新 paymentData 資料
+    function paymentSave(){
+        const priceRemove = paymentData[personIndex].payment[paymentIndex].price
+        if(inputEditValues.editItem.length > 0){
+            const itemNew = inputEditValues.editItem
+            paymentData[personIndex].payment[paymentIndex].item = itemNew
+        }
+        if(inputEditValues.editPrice.length > 0){
+            const priceNew = Number(inputEditValues.editPrice)
+            paymentData[personIndex].payment[paymentIndex].price = priceNew
+            setTotalPrice(totalPrice - priceRemove + priceNew)
+        }
         setShow(false)
+        setInputEditValues({
+            editItem: '',
+            editPrice: '',
+          })
     }
 
-    // modal input value 監聽表單元素的值變化
-    function onEditItemChange(event){
-        if(event.target.value.length <= 0){
-            return
-        } else {
-            paymentData[0].payment[index].item = event.target.value
-        }
+    // 監聽 modal 中 input（item/price）的值變化
+    const handleEditInputChange = (event) => {
+        const { name, value } = event.target;
+        setInputEditValues({ ...inputEditValues, [name]: value });
     }
-
-    function onEditPriceChange(event){
-        if(event.target.value.length <= 0){
-            return
-        } else {
-            setTotalPrice(totalPrice - paymentData[0].payment[index].price + parseInt(event.target.value))
-            paymentData[0].payment[index].price = parseInt(event.target.value)
-        }
-    }    
 
     return(
     <div className={Style.container}>
-        {/* Item/Price */}
+        {/* Input */}
         <div className={Style.wrap}>
             <div className={Style.form__container}>
                 <form onSubmit={handleSubmit}>
                         <label className={Style.item__label}>
                             <h2>Item</h2>
-                            <input type="text" name="item" value={item} placeholder="輸入文字" onChange={onItemChange} />
+                            <input type="text" name="item" value={inputValues.item} placeholder="輸入文字" onChange={handleInputChange} />
                         </label>
                         <label className={Style.price__label}>
                             <h2>Price</h2>
-                            <input type="text" name="price" value={price} placeholder="輸入金額" onChange={onPriceChange} />
+                            <input type="text" name="price" value={inputValues.price} placeholder="輸入金額" onChange={handleInputChange} />
                         </label>
                         <button className={Style.submit__btn} type="submit">+</button>
                 </form>
@@ -190,23 +185,23 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
                     <div className={Style.modal__wrapper}>
                         <div>
                             <div className={Style.edit__avatar__icon}><EditIcon /></div>
-                            <div className={Style.avatar} style={{background:showModal.color}}>{showModal.name[0]}</div> 
+                            <div className={Style.avatar} style={{background:showModal.color}}>{showModal.avatar}</div> 
                         </div>
                         <h2>{showModal.name}</h2>
                         <Modal.Body>
                             <div className={Style.modal__body}>
                                 <div className={Style.edit__column}>
                                     <h3>Item</h3>
-                                    <input type="text" onChange={onEditItemChange} placeholder={itemPlaceholder} />
+                                    <input type='text' name='editItem' value={inputEditValues.editItem} onChange={handleEditInputChange} placeholder={showModal.item} />
                                 </div>
                                 <div className={Style.edit__column}>
                                     <h3>Price</h3>
-                                    <input type="number" onChange={onEditPriceChange} placeholder={pricePlaceholder} />
+                                    <input type='number' name='editPrice' value={inputEditValues.editPrice} onChange={handleEditInputChange} placeholder={showModal.price} />
                                 </div>
                             </div>
                         </Modal.Body>
                         <div className={Style.modal__footer}>
-                            <Button className={Style.save__btn} onClick={saveEditedPayment} variant="light" size="sm">
+                            <Button className={Style.save__btn} onClick={paymentSave} variant="light" size="sm">
                                 Save
                             </Button>
                             <Button className={Style.delete__btn} onClick={paymentRemove} variant="dark" size="sm">

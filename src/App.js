@@ -8,7 +8,7 @@ import './styles/base.module.css'
 function App() {
 
   // 當前頁面，預設為 Home Page
-  const [currentPage, setCurrentPage] = useState('Home');
+  const [currentPage, setCurrentPage] = useState('');
 
   return (
     <>

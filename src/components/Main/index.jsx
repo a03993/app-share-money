@@ -6,7 +6,7 @@ import Result from './Result'
 
 function Main( {currentPage, setCurrentPage} ) {
 
-    // Array:paymentData (這邊先設定原本就存有一筆資料，目前是假資料)
+    // Array: 這邊先設定原本就存有一筆資料，目前是假資料
     const [paymentData, setPaymentData] = useState([
         {
             id: uuid(),
@@ -87,7 +87,8 @@ function Main( {currentPage, setCurrentPage} ) {
             ]
         }
     ]);
-    // 數字：totalPrice （這邊先設定如同 paymentData 依樣的假資料：總金額 $3,240)
+
+    // 數字：總金額 -> 這邊先設定如同 paymentData 相符合的假資料：總金額 $3,240
     const [totalPrice, setTotalPrice] = useState(3240)
 
     // local Storage -> 登入過後就不會再跳 popup 要求登入
@@ -99,8 +100,8 @@ function Main( {currentPage, setCurrentPage} ) {
 
     return(
         <main>
-            {currentPage === 'Home' && <Home paymentData={paymentData} currentPage={currentPage} setCurrentPage={setCurrentPage} />}
-            {currentPage === 'List' && <PaymentList paymentData={paymentData} totalPrice={totalPrice} setTotalPrice={setTotalPrice} />}
+            {!currentPage && <Home paymentData={paymentData} setPaymentData={setPaymentData} setCurrentPage={setCurrentPage} />}
+            {currentPage === 'List' && <PaymentList paymentData={paymentData} setPaymentData={setPaymentData} totalPrice={totalPrice} setTotalPrice={setTotalPrice} />}
             {currentPage === 'Result' && <Result paymentData={paymentData} totalPrice={totalPrice} />}     
         </main>
     )

@@ -11,7 +11,8 @@ function Header( {currentPage, setCurrentPage} ) {
     const [expanded, setExpanded] = useState(false);
 
     function handleHomeClick() {
-        setCurrentPage('Home')
+        // 暫時測試用 -> 回到首頁創建使用者
+        setCurrentPage('')
         setExpanded(false);
     }
 
@@ -30,10 +31,10 @@ function Header( {currentPage, setCurrentPage} ) {
             <Navbar className={Style.navbar} expanded={expanded} expand="lg">
                 <Container className={Style.container}>
                     <Navbar.Brand className={Style.brand} onClick={handleHomeClick}>ShareMoney</Navbar.Brand>
-                    <Navbar.Toggle className={Style.toggle} onClick={() => setExpanded(!expanded)} style={currentPage==='Home' ? {display: 'none'} : {display: 'block'}} aria-controls="basic-navbar-nav" />
+                    <Navbar.Toggle className={Style.toggle} onClick={() => setExpanded(!expanded)} style={!currentPage ? {display: 'none'} : {display: 'block'}} />
                     <Navbar.Collapse className={Style.collapse}>
-                        <Nav.Link className={Style.nav__item} onClick={handleListClick} style={currentPage==='Home' ? {display: 'none'} : {display: 'block'}}>list</Nav.Link>
-                        <Nav.Link className={Style.nav__item} onClick={handleResultClick} style={currentPage==='Home' ? {display: 'none'} : {display: 'block'}}>result</Nav.Link>
+                        <Nav.Link className={Style.nav__item} onClick={handleListClick} style={!currentPage ? {display: 'none'} : {display: 'block'}}>list</Nav.Link>
+                        <Nav.Link className={Style.nav__item} onClick={handleResultClick} style={!currentPage ? {display: 'none'} : {display: 'block'}}>result</Nav.Link>
                     </Navbar.Collapse>
                 </Container>
             </Navbar>

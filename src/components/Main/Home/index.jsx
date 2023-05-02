@@ -5,13 +5,13 @@ import Button from 'react-bootstrap/Button';
 import { color } from '../data.jsx'
 import Style from './Home.module.css'
 
-function Home ({ paymentData, setCurrentPage }) {
+function Home ({ paymentData, setPaymentData, setCurrentPage }) {
 
     const [show, setShow] = useState(false);
     const [selected, setSelected] = useState(2);
     const [name, setName] = useState('');
 
-    // show & close Modal
+    // Modal Show
     const handleShow = () => {
         setShow(true)
     }
@@ -20,35 +20,30 @@ function Home ({ paymentData, setCurrentPage }) {
         setName('')
     }
 
-    // color list rendering
-    const listStatus = (index) => {
+    // 被選擇的 avatar color 再陣列中的位置
+    const colorSelected = (index) => {
         setSelected(index)
     }
 
     const ColorsList = color.map(
         (color, index) =>
             <div className={selected === index ? Style.selected : ''}>
-                <li key={color.toString()} onClick={(e) => listStatus(index)} style={{background:color}}>
+                <li key={color.toString()} onClick={(e) => colorSelected(index)} style={{background:color}}>
                 </li>
             </div>
-        )
-
-    // avatar rendering
-    const Avatar = color.map(
-        (color, index) => 
-            <div className={Style.avatar} style={{display: selected === index ? 'block' : 'none' ,background: color}}>
-                <h2>{name[0]}</h2>
-            </div>
-        )
+        )        
 
     // create account
     const handleSubmit = () => {
-            paymentData.push ({
-                id: uuid,
+        setPaymentData([
+            ...paymentData,
+            {
+                id: uuid(),
                 name: name,
                 color: color[selected],
-                payment:[]
-            })
+                payment: []
+            }
+        ])
             setCurrentPage('List')
         }
 
@@ -83,11 +78,13 @@ function Home ({ paymentData, setCurrentPage }) {
                     </div>
                 </Modal.Body>
                 <div className={Style.modal__footer}>
-                    {Avatar}
-                        <Button disabled={!name} onClick={handleSubmit} className={Style.btn__view} variant="light" size="sm">
-                            View List
-                        </Button>
+                    <div className={Style.avatar} style={{background: color[selected]}}>
+                        <h2>{name[0]}</h2>
                     </div>
+                    <Button disabled={!name} onClick={handleSubmit} className={Style.btn__view} variant="light" size="sm">
+                        View List
+                    </Button>
+                </div>
             </Modal>
         </div>
     )

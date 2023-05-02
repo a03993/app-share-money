@@ -1,115 +1,96 @@
 import React, { useState } from 'react';
 import { numberWithCommas } from '../function'
-
 import Style from "./Result.module.css"
 
-function Result({ paymentData, totalPrice }) {
+function Result({ paymentData, totalPrice }) {    
 
-    const paymentResult = []
-    const creditor = []
-    const debtor = []
+    // 平均花費
+    const paymentAverage = Math.round(totalPrice/paymentData.length)
 
-    const paymentResultDataTest = paymentData.map((person) => {
-        const sum = person.payment.map((payment)=> payment.price).reduce((total, price) => {
-          return total + price;
+    // 陣列：從 paymentData 取出每個人的花費並與平均花費相比
+    const paymentResultData = paymentData.map((person) => {
+        const sum = person.payment.map(payment => payment.price).reduce((total, price) => {
+            return total + price;
         }, 0);
-        return { name: person.name, color: person.color, payment: sum };
-      });
+        return { id:person.id, name: person.name, color: person.color, result: sum - paymentAverage};
+    });
 
-    const paymentAverage = Math.round(totalPrice/paymentResultDataTest.length)
+    console.log('paymentResultData: ', paymentResultData)
 
-    // 從 paymentData render 使用者的 avatar 
+    // 陣列：從 personalPaymentResult 中分類出 “欠款、收款、無需付款”
+    const personalPayment = {
+        debtor : paymentResultData.filter(person => person.result < 0),
+        creditor : paymentResultData.filter(person => person.result > 0),
+    }
+
+    console.log('personalPayment: ', personalPayment)
+
+    // 陣列：從 personalPayment 中取得 “欠款人”
+    const paymentResult = personalPayment.debtor.map(payer => {
+        return { id:payer.id, name:payer.name, color:payer.color, toPay:[] }
+    })
+    
+    console.log('paymentResult: ', paymentResult)
+
+    function SpiltBill(){
+        for(let i = 0; i < personalPayment.debtor.length; i++){
+            for(let j = 0; j < personalPayment.creditor.length; j++){
+                // 當有欠款的時候才會開始比對
+                if(personalPayment.debtor[i].result < 0){
+                    // 欠款 < 還款 -> 不需要再比對
+                    if(personalPayment.debtor[i].result + personalPayment.creditor[j].result > 0){
+                        paymentResult[i].toPay.push({
+                            name: personalPayment.creditor[j].name,
+                            color: personalPayment.creditor[j].color,
+                            price: Math.abs(personalPayment.debtor[i].result)
+                        })
+                        personalPayment.creditor[j].result += personalPayment.debtor[i].result
+                        personalPayment.debtor[i].result = 0
+                        break
+                    }
+                    // 欠款 > 還款 -> 需要再比對
+                    if(personalPayment.debtor[i].result + personalPayment.creditor[j].result < 0){
+                        paymentResult[i].toPay.push({
+                            name: personalPayment.creditor[j].name,
+                            color: personalPayment.creditor[j].color,
+                            price: Math.abs(personalPayment.creditor[j].result)
+                        })
+                    }
+                }     
+            }
+        }
+    }
+
+    SpiltBill()
+
+    function handleCheckChange(e) {
+        console.log(e.target.value)
+    }
+
+    // 渲染 使用者的 avatar by paymentData
     const ShowPersonAvatar = paymentData.map (person => 
-    <li key={person.payment.id} style={{background: person.color}}>{person.name[0]}</li>)
-
-    function Classification() {
-        for(let i = 0; i < paymentResultDataTest.length; i++){
-            if(paymentAverage - paymentResultDataTest[i].payment < 0){
-                creditor.push({
-                    name: paymentResultDataTest[i].name,
-                    color: paymentResultDataTest[i].color,
-                    bePayed: Math.round(Math.abs(paymentAverage - paymentResultDataTest[i].payment))
-                })
-            } else {
-                debtor.push({
-                    name: paymentResultDataTest[i].name,
-                    color: paymentResultDataTest[i].color,
-                    pay: Math.round(Math.abs(paymentAverage - paymentResultDataTest[i].payment))
-                })
-            }
-        }
-    }
-
-    Classification()
-
-    function toPay(){
-        for(let i = 0; i < debtor.length; i++){
-            paymentResult.push({
-                debtor:debtor[i].name,
-                color:debtor[i].color,
-                payment:[]
-            })
-            for(let j = 0; j < creditor.length; j++){
-                if (debtor[i].pay - creditor[j].bePayed > 0){
-                    // console.log(debtor[i].name + ' need to pay ' + creditor[j].name + creditor[j].bePayed + '元')
-                    paymentResult[i].payment.push({
-                        creditor: creditor[j].name,
-                        color: creditor[j].color,
-                        debt: creditor[j].bePayed
-                    })
-                    debtor[i].pay = debtor[i].pay - creditor[j].bePayed
-                    creditor[j].bePayed = 0
-                    // console.log(debtor[i].name + ' 還要繼續還下一個人錢')    
-                } else if (debtor[i].pay - creditor[j].bePayed === 0){
-                    // console.log(debtor[i].name + ' need to pay ' + creditor[j].name + creditor[j].bePayed + '元')
-                    paymentResult[i].payment.push({
-                        creditor: creditor[j].name,
-                        color: creditor[j].color,
-                        debt: creditor[j].bePayed
-                    })
-                    debtor[i].pay = 0
-                    creditor[j].bePayed = 0
-                    // console.log(debtor[i].name + '不用再還錢')
-                    break
-                } else if (debtor[i].pay - creditor[j].bePayed < 0){
-                    // console.log(debtor[i].name + ' need to pay ' + creditor[j].name + debtor[i].pay + '元')
-                    paymentResult[i].payment.push({
-                        creditor: creditor[j].name,
-                        color: creditor[j].color,
-                        debt: debtor[i].pay
-                    })
-                    creditor[j].bePayed = creditor[j].bePayed - debtor[i].pay
-                    debtor[i].pay = 0
-                    // console.log(creditor[j].name + '還需得到' + creditor[j].bePayed)
-                    // console.log(debtor[i].name + '不用再還錢')
-                    break
-                }
-            }
-        }
-    }
-
-    toPay()
+        <li key={person.payment.id} style={{background: person.color}}>{person.name[0]}</li>)
 
     // 渲染 Payment
-    const Payment = paymentResult.map(person =>(
+    const Payment = paymentResult.map((payer, payerIndex) =>(
         <>
             <div className={Style.payment__wrapper}>
                 <div className={Style.payment__list}>
                     <div>
-                        <div className={Style.avatar} style={{background: person.color}}>{person.debtor[0]}</div>
+                        <div className={Style.avatar} style={{background: payer.color}}>{payer.name[0]}</div>
                     </div>
                     <div className={Style.payment__content}>
                         <ul>
-                            {person.payment.map(payment =>(
-                                <li className={Style.payment} style={!payment.debt ? {display:'none'} : {dispaly:'block'}}>
+                            {payer.toPay.map((payee, payeeIndex) =>(
+                                <li className={Style.payment}>
                                     <div className={Style.pay}>
                                         <div>pay</div>
                                         <div className={Style.pay__arrow}></div>
                                     </div>
-                                    <div className={Style.avatar}  style={{background: payment.color}}>{payment.creditor[0]}</div>
-                                    <div className={Style.price}>${numberWithCommas(payment.debt)}</div>
+                                    <div className={Style.avatar} style={{background: payee.color}}>{payee.name[0]}</div>
+                                    <div className={Style.price}>${numberWithCommas(payee.price)}</div>
                                     <label>
-                                        <input className={Style.checkPayment} type="checkbox" name="check"></input>
+                                        <input className={Style.checkPayment} type='checkbox'></input>
                                         <span></span>
                                     </label>
                                 </li>

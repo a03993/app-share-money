@@ -2,7 +2,7 @@ import React from 'react';
 import Style from './Footer.module.css'
 
 function Footer() {
-    const paymentListLink = "http://localhost:3000/"
+    const paymentListLink = 'http://localhost:3000/sharemoney/paymentlist'
 
     return(
         <footer>

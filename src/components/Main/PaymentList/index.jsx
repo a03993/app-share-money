@@ -1,18 +1,23 @@
 import React, { useState } from 'react';
+import { numberWithCommas } from '../function'
+import { color } from '../data.jsx'
+import { CreatAccountModal } from '../CreateAccountModal/index.jsx';
+import { EditPaymentModal } from './EditPaymentModal/index.jsx';
 import Footer from './Footer'
 import uuid from 'react-uuid';
-import Modal from 'react-bootstrap/Modal';
-import Button from 'react-bootstrap/Button';
-import { ReactComponent as EditIcon } from './icon/edit.svg'
-import { numberWithCommas } from '../function'
 import Style from './PaymentList.module.css';
 
 
-function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
+function PaymentList({ newAccount, setNewAccount, paymentData, setPaymentData, totalPrice, setTotalPrice }) {
 
-    const handleClose = () => setShow(false);
-    const [show, setShow] = useState(false);
-    const [showModal, setShowModal] = useState({})
+    // Create Account Modal
+    const [show, setShow] = useState(true)
+    const [selected, setSelected] = useState(2);
+    const [name, setName] = useState('');  
+
+    // Edit Modal
+    const [showModal, setShowModal] = useState(false);
+    const [renderModal, setRenderModal] = useState({})
     const [inputValues, setInputValues] = useState({
         item: '',
         price: '',
@@ -24,14 +29,31 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
     const [personIndex, setPersonIndex] = useState(0)
     const [paymentIndex, setPaymentIndex] = useState(0)
 
-
     // 創建後在 paymentData 內的 index
     const thisIndex = paymentData.length - 1
 
     // input value 監聽表單元素（item/price）的值變化
-    const handleInputChange = (event) => {
+    const onInputChange = (event) => {
         const { name, value } = event.target;
         setInputValues({ ...inputValues, [name]: value });
+    }
+
+    const CreateAccountHandleSubmit = () => {
+        setNewAccount({
+            id: uuid(),
+            name: name,
+            color: color[selected],
+            payment: []
+        })
+        setPaymentData([
+            ...paymentData,
+            {
+                id: uuid(),
+                name: name,
+                color: color[selected],
+                payment: []
+            }
+        ])
     }
 
     // 按下 + 按鈕後，將 input 的值傳遞至物件陣列 paymentData 內儲存
@@ -87,8 +109,8 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
 
     // 點擊 > 按鈕 show modal
     function handleShow(person, personIndex, paymentIndex) {
-        setShow(true)
-        setShowModal({
+        setShowModal(true)
+        setRenderModal({
             id: person.payment[paymentIndex].id,
             avatar: person.name[0],
             color: person.color,
@@ -105,7 +127,7 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
         const priceRemove = paymentData[personIndex].payment[paymentIndex].price
         setTotalPrice(totalPrice - priceRemove)
         paymentData[personIndex].payment.splice(paymentIndex, 1)
-        setShow(false)
+        setShowModal(false)
     }
 
     // modal 中點擊 save 更新 paymentData 資料
@@ -120,17 +142,11 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
             paymentData[personIndex].payment[paymentIndex].price = priceNew
             setTotalPrice(totalPrice - priceRemove + priceNew)
         }
-        setShow(false)
+        setShowModal(false)
         setInputEditValues({
             editItem: '',
             editPrice: '',
           })
-    }
-
-    // 監聽 modal 中 input（item/price）的值變化
-    const handleEditInputChange = (event) => {
-        const { name, value } = event.target;
-        setInputEditValues({ ...inputEditValues, [name]: value });
     }
 
     return(
@@ -141,11 +157,11 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
                 <form onSubmit={handleSubmit}>
                         <label className={Style.item__label}>
                             <h2>Item</h2>
-                            <input type="text" name="item" value={inputValues.item} placeholder="輸入文字" onChange={handleInputChange} />
+                            <input type="text" name="item" value={inputValues.item} placeholder="輸入文字" onChange={onInputChange} />
                         </label>
                         <label className={Style.price__label}>
                             <h2>Price</h2>
-                            <input type="text" name="price" value={inputValues.price} placeholder="輸入金額" onChange={handleInputChange} />
+                            <input type="text" name="price" value={inputValues.price} placeholder="輸入金額" onChange={onInputChange} />
                         </label>
                         <button className={Style.submit__btn} type="submit">+</button>
                 </form>
@@ -170,48 +186,37 @@ function PaymentList({ paymentData, totalPrice, setTotalPrice }) {
             {/* Detail */}
             <div className={Style.detail__container}>
                 <h2>Detail</h2>
-                    <div className={Style.detail__wrapper}>
-                        <ul>
-                            {detail}
-                        </ul>                    
-                    </div>
+                <div className={Style.detail__wrapper}>
+                    <ul>
+                        {detail}
+                    </ul>                    
                 </div>
             </div>
-            <Footer />
-                        
-            <Modal show={show} onHide={handleClose} animation={false}>
-                <div>
-                    <Modal.Header closeButton></Modal.Header>
-                    <div className={Style.modal__wrapper}>
-                        <div>
-                            <div className={Style.edit__avatar__icon}><EditIcon /></div>
-                            <div className={Style.avatar} style={{background:showModal.color}}>{showModal.avatar}</div> 
-                        </div>
-                        <h2>{showModal.name}</h2>
-                        <Modal.Body>
-                            <div className={Style.modal__body}>
-                                <div className={Style.edit__column}>
-                                    <h3>Item</h3>
-                                    <input type='text' name='editItem' value={inputEditValues.editItem} onChange={handleEditInputChange} placeholder={showModal.item} />
-                                </div>
-                                <div className={Style.edit__column}>
-                                    <h3>Price</h3>
-                                    <input type='number' name='editPrice' value={inputEditValues.editPrice} onChange={handleEditInputChange} placeholder={showModal.price} />
-                                </div>
-                            </div>
-                        </Modal.Body>
-                        <div className={Style.modal__footer}>
-                            <Button className={Style.save__btn} onClick={paymentSave} variant="light" size="sm">
-                                Save
-                            </Button>
-                            <Button className={Style.delete__btn} onClick={paymentRemove} variant="dark" size="sm">
-                                Delete
-                            </Button>
-                        </div>
-                    </div>
-                </div>
-            </Modal>
+        </div>
+
+        <Footer />
+
+        <EditPaymentModal 
+            showModal={showModal}
+            setShowModal={setShowModal}
+            renderModal={renderModal}
+            inputEditValues={inputEditValues}
+            setInputEditValues={setInputEditValues}
+            paymentSave={paymentSave}
+            paymentRemove={paymentRemove}
+        />
+
+        <CreatAccountModal 
+            show={Object.keys(newAccount).length > 0 ? !show : show} 
+            setShow={setShow}
+            selected={selected}
+            setSelected={setSelected}
+            name={name}
+            setName={setName}
+            handleSubmit={CreateAccountHandleSubmit}
+        />
     </div>
     )}
+
 
 export default PaymentList

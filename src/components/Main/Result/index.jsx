@@ -8,52 +8,52 @@ function Result({ paymentData, totalPrice }) {
     const paymentAverage = Math.round(totalPrice/paymentData.length)
 
     // 陣列：從 paymentData 取出每個人的花費並與平均花費相比
-    const paymentResultData = paymentData.map((person) => {
+    const paymentResult = paymentData.map((person) => {
         const sum = person.payment.map(payment => payment.price).reduce((total, price) => {
             return total + price;
         }, 0);
         return { id:person.id, name: person.name, color: person.color, result: sum - paymentAverage};
     });
 
-    console.log('paymentResultData: ', paymentResultData)
-
-    // 陣列：從 personalPaymentResult 中分類出 “欠款、收款、無需付款”
-    const personalPayment = {
-        debtor : paymentResultData.filter(person => person.result < 0),
-        creditor : paymentResultData.filter(person => person.result > 0),
-    }
-
-    console.log('personalPayment: ', personalPayment)
-
-    // 陣列：從 personalPayment 中取得 “欠款人”
-    const paymentResult = personalPayment.debtor.map(payer => {
-        return { id:payer.id, name:payer.name, color:payer.color, toPay:[] }
-    })
-    
     console.log('paymentResult: ', paymentResult)
 
+    // 物件陣列：從 paymentResult 中分類出 “欠款、收款” 的使用者
+    const personalPaymentResult = {
+        debtor : paymentResult.filter(person => person.result < 0),
+        creditor : paymentResult.filter(person => person.result > 0),
+    }
+
+    console.log('personalPaymentResult: ', personalPaymentResult)
+
+    // 陣列：從 personalPaymentResult 中取得 “欠款人”
+    const paymentRendering = personalPaymentResult.debtor.map(payer => {
+        return { id:payer.id, name:payer.name, color:payer.color, toPay:[] }
+    })
+
     function SpiltBill(){
-        for(let i = 0; i < personalPayment.debtor.length; i++){
-            for(let j = 0; j < personalPayment.creditor.length; j++){
+        for(let i = 0; i < personalPaymentResult.debtor.length; i++){
+            for(let j = 0; j < personalPaymentResult.creditor.length; j++){
                 // 當有欠款的時候才會開始比對
-                if(personalPayment.debtor[i].result < 0){
+                if(personalPaymentResult.debtor[i].result < 0){
                     // 欠款 < 還款 -> 不需要再比對
-                    if(personalPayment.debtor[i].result + personalPayment.creditor[j].result > 0){
-                        paymentResult[i].toPay.push({
-                            name: personalPayment.creditor[j].name,
-                            color: personalPayment.creditor[j].color,
-                            price: Math.abs(personalPayment.debtor[i].result)
+                    if(personalPaymentResult.debtor[i].result + personalPaymentResult.creditor[j].result > 0){
+                        paymentRendering[i].toPay.push({
+                            name: personalPaymentResult.creditor[j].name,
+                            color: personalPaymentResult.creditor[j].color,
+                            price: Math.abs(personalPaymentResult.debtor[i].result),
+                            checked: false
                         })
-                        personalPayment.creditor[j].result += personalPayment.debtor[i].result
-                        personalPayment.debtor[i].result = 0
+                        personalPaymentResult.creditor[j].result += personalPaymentResult.debtor[i].result
+                        personalPaymentResult.debtor[i].result = 0
                         break
                     }
                     // 欠款 > 還款 -> 需要再比對
-                    if(personalPayment.debtor[i].result + personalPayment.creditor[j].result < 0){
-                        paymentResult[i].toPay.push({
-                            name: personalPayment.creditor[j].name,
-                            color: personalPayment.creditor[j].color,
-                            price: Math.abs(personalPayment.creditor[j].result)
+                    if(personalPaymentResult.debtor[i].result + personalPaymentResult.creditor[j].result < 0){
+                        paymentRendering[i].toPay.push({
+                            name: personalPaymentResult.creditor[j].name,
+                            color: personalPaymentResult.creditor[j].color,
+                            price: Math.abs(personalPaymentResult.creditor[j].result),
+                            checked: false
                         })
                     }
                 }     
@@ -63,16 +63,12 @@ function Result({ paymentData, totalPrice }) {
 
     SpiltBill()
 
-    function handleCheckChange(e) {
-        console.log(e.target.value)
-    }
-
     // 渲染 使用者的 avatar by paymentData
     const ShowPersonAvatar = paymentData.map (person => 
         <li key={person.payment.id} style={{background: person.color}}>{person.name[0]}</li>)
 
     // 渲染 Payment
-    const Payment = paymentResult.map((payer, payerIndex) =>(
+    const Payment = paymentRendering.map((payer, payerIndex) =>(
         <>
             <div className={Style.payment__wrapper}>
                 <div className={Style.payment__list}>
@@ -105,7 +101,7 @@ function Result({ paymentData, totalPrice }) {
 
     return(
         <div className={Style.container}>
-            {/* 人數、總金額、平均金額 */}
+            {/* 平均金額 */}
             <div className={Style.average__container}>
                 <div className={Style.average__wrapper}>
                     <div className={Style.average}>
@@ -113,6 +109,7 @@ function Result({ paymentData, totalPrice }) {
                         <h3>/人</h3>
                     </div>
                 </div>
+                {/* 人數、總金額 */}
                 <div className={Style.total__list__container}>
                     <div className={Style.total__wrapper}>
                         <div className={Style.total}>
@@ -144,9 +141,9 @@ function Result({ paymentData, totalPrice }) {
                 <div className={Style.done__payment__list__wrapper}>
                     <h2>Done Payment</h2>
                     <div className={Style.line}></div>
-
                 </div>     
             </div>
+
         </div>
     )
 }

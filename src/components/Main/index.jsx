@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
+import { Routes, Route } from "react-router-dom";
 import uuid from 'react-uuid';
 import Home from './Home'
 import PaymentList from './PaymentList'
 import Result from './Result'
 
-function Main( {currentPage, setCurrentPage} ) {
+function Main( {newAccount, setNewAccount} ) {
 
     // Array: 這邊先設定原本就存有一筆資料，目前是假資料
     const [paymentData, setPaymentData] = useState([
@@ -92,18 +93,17 @@ function Main( {currentPage, setCurrentPage} ) {
     const [totalPrice, setTotalPrice] = useState(3240)
 
     // local Storage -> 登入過後就不會再跳 popup 要求登入
-    localStorage.setItem('paymentData' ,JSON.stringify(paymentData));
+    localStorage.setItem('account' ,JSON.stringify(newAccount));
 
     // 取出 local storage 的值
-    // const myData = JSON.parse(localStorage.getItem('paymentData'));
-    // console.log('local Storage: ',myData)
+    const myData = JSON.parse(localStorage.getItem('account'));
 
     return(
-        <main>
-            {!currentPage && <Home paymentData={paymentData} setPaymentData={setPaymentData} setCurrentPage={setCurrentPage} />}
-            {currentPage === 'List' && <PaymentList paymentData={paymentData} setPaymentData={setPaymentData} totalPrice={totalPrice} setTotalPrice={setTotalPrice} />}
-            {currentPage === 'Result' && <Result paymentData={paymentData} totalPrice={totalPrice} />}     
-        </main>
+        <Routes>
+            <Route exact path="/" element={<Home newAccount={newAccount} setNewAccount={setNewAccount} paymentData={paymentData} setPaymentData={setPaymentData} />} />
+            <Route path="paymentlist" element={<PaymentList newAccount={newAccount} setNewAccount={setNewAccount} paymentData={paymentData} setPaymentData={setPaymentData} totalPrice={totalPrice} setTotalPrice={setTotalPrice} />} />
+            <Route path="result" element={<Result paymentData={paymentData} totalPrice={totalPrice} />} />
+        </Routes>
     )
 }
 

@@ -22,7 +22,8 @@ header {
 }
 
 .collapse {
-    margin-left: 1rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .nav__item {
@@ -42,6 +43,11 @@ header {
     .brand {
         font-size: 30px;
         margin: 0;
+    }
+
+    .collapse {
+        flex-direction: row;
+        margin-left: 1rem;
     }
 }
 

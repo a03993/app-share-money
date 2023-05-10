@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {SpiltBill} from './SpiltBill'
 import { numberWithCommas } from '../function'
 import Style from "./Result.module.css"
 
@@ -15,53 +16,24 @@ function Result({ paymentData, totalPrice }) {
         return { id:person.id, name: person.name, color: person.color, result: sum - paymentAverage};
     });
 
-    console.log('paymentResult: ', paymentResult)
-
     // 物件陣列：從 paymentResult 中分類出 “欠款、收款” 的使用者
     const personalPaymentResult = {
         debtor : paymentResult.filter(person => person.result < 0),
         creditor : paymentResult.filter(person => person.result > 0),
     }
 
-    console.log('personalPaymentResult: ', personalPaymentResult)
-
     // 陣列：從 personalPaymentResult 中取得 “欠款人”
     const paymentRendering = personalPaymentResult.debtor.map(payer => {
         return { id:payer.id, name:payer.name, color:payer.color, toPay:[] }
     })
 
-    function SpiltBill(){
-        for(let i = 0; i < personalPaymentResult.debtor.length; i++){
-            for(let j = 0; j < personalPaymentResult.creditor.length; j++){
-                // 當有欠款的時候才會開始比對
-                if(personalPaymentResult.debtor[i].result < 0){
-                    // 欠款 < 還款 -> 不需要再比對
-                    if(personalPaymentResult.debtor[i].result + personalPaymentResult.creditor[j].result > 0){
-                        paymentRendering[i].toPay.push({
-                            name: personalPaymentResult.creditor[j].name,
-                            color: personalPaymentResult.creditor[j].color,
-                            price: Math.abs(personalPaymentResult.debtor[i].result),
-                            checked: false
-                        })
-                        personalPaymentResult.creditor[j].result += personalPaymentResult.debtor[i].result
-                        personalPaymentResult.debtor[i].result = 0
-                        break
-                    }
-                    // 欠款 > 還款 -> 需要再比對
-                    if(personalPaymentResult.debtor[i].result + personalPaymentResult.creditor[j].result < 0){
-                        paymentRendering[i].toPay.push({
-                            name: personalPaymentResult.creditor[j].name,
-                            color: personalPaymentResult.creditor[j].color,
-                            price: Math.abs(personalPaymentResult.creditor[j].result),
-                            checked: false
-                        })
-                    }
-                }     
-            }
-        }
-    }
+    console.log('paymentRendering: ', paymentRendering)
 
-    SpiltBill()
+    SpiltBill({personalPaymentResult, paymentRendering})
+
+    const handleCheckboxChange = () => {
+        console.log('click')
+    }
 
     // 渲染 使用者的 avatar by paymentData
     const ShowPersonAvatar = paymentData.map (person => 
@@ -78,7 +50,7 @@ function Result({ paymentData, totalPrice }) {
                     <div className={Style.payment__content}>
                         <ul>
                             {payer.toPay.map((payee, payeeIndex) =>(
-                                <li className={Style.payment}>
+                                <li className={Style.payment} key={payee.id}>
                                     <div className={Style.pay}>
                                         <div>pay</div>
                                         <div className={Style.pay__arrow}></div>

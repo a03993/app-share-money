@@ -27,6 +27,7 @@ function Home ({ setNewAccount, paymentData, setPaymentData }) {
                 payment: []
             }
         ])
+        setShow(false)
     }
 
     return(
